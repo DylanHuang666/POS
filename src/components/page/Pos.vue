@@ -11,18 +11,18 @@
               <el-table-column label="操作" fixed="right" width="100">
                 <template slot-scope="scope">
                   <el-button type="text" size="small" @click="addOrderList(scope.row)">添加</el-button>
-                  <el-button type="text" size="small">删除</el-button>
+                  <el-button type="text" size="small" @click="delSingleGoods(scope.row)">删除</el-button>
                 </template>
               </el-table-column>
             </el-table>
             <div class="total">
-              <span>数量：{{totalCount}}</span>
+              <span>总数量：{{totalCount}}</span>
               <span>总价：￥{{totalMoney}}</span>
             </div>
             <div class="div-btn">
               <el-button type="warning">挂单</el-button>
-              <el-button type="danger">删除</el-button>
-              <el-button type="success">结账</el-button>
+              <el-button type="danger" @click="delAllGoods">删除</el-button>
+              <el-button type="success" @click="pay">结账</el-button>
             </div>          
           </el-tab-pane>
           <el-tab-pane label="挂单">
@@ -147,10 +147,37 @@ export default {
         }
         this.tableData.push(newGoods)
       }
+      this.getAllMoneyAndCount()
+    },
+    delSingleGoods(goods){
+      this.tableData=this.tableData.filter((val)=>{
+        return val.goodsId!=goods.goodsId
+      })
+      this.getAllMoneyAndCount()
+    },
+    getAllMoneyAndCount(){
+      this.totalMoney=0
+      this.totalCount=0
       this.tableData.forEach((ele)=>{
         this.totalCount+=ele.count
         this.totalMoney=this.totalMoney+(ele.price*ele.count)
       })
+    },
+    delAllGoods(){
+      this.tableData=[]
+      this.totalCount=0
+      this.totalMoney=0
+    },
+    pay(){
+      if(this.totalCount!=0){
+        this.delAllGoods()
+        this.$message({
+          message:'结账成功，请耐心等待！',
+          type:'success'
+        })
+      }else{
+        this.$message.error('请先添加商品再结账哦！')
+      }
     }
   },
   created:function(){
