@@ -20,16 +20,26 @@
               <span>总价：￥{{totalMoney}}</span>
             </div>
             <div class="div-btn">
-              <el-button type="warning">挂单</el-button>
+              <!-- <el-button type="warning">挂单</el-button> -->
               <el-button type="danger" @click="delAllGoods">删除</el-button>
               <el-button type="success" @click="pay">结账</el-button>
             </div>          
           </el-tab-pane>
-          <el-tab-pane label="挂单">
-            
+          <el-tab-pane label="订单">
+            <el-table :data=orderForm border style="width:100%">
+              <el-table-column label="订单号" prop="orderNumber" width="100"></el-table-column>
+              <el-table-column label="取餐号" prop="goodNumber" width="100"></el-table-column>
+              <el-table-column label="金额" prop="money"></el-table-column>            
+            </el-table>
           </el-tab-pane>
-          <el-tab-pane label="外卖">
-            
+          <el-tab-pane label="配送">
+            <div class="input">
+              <span>收件人姓名：</span><el-input v-model="input" placeholder="请输入收件人姓名"></el-input>
+              <span>收件地址：</span><el-input v-model="adress" placeholder="请输入收件地址"></el-input>
+              <div class="btn-ipt"><el-button type="primary" @click="submitMessage" round>确认</el-button></div>
+              
+            </div>
+                             
           </el-tab-pane>
         </el-tabs>
       </el-col>
@@ -115,12 +125,66 @@ export default {
     return {
       tableData: [],
       oftenGoods:[],
-      type0Goods: [],
-      type1Goods: [],
-      type2Goods: [],
-      type3Goods: [],
+      type0Goods: [{
+              goodsId:1,
+              goodsImg:"https://img.4008823823.com.cn/kfcios/Version/614_607625.jpg",
+              goodsName:'香辣鸡腿堡',
+              price:18
+          }, {
+              goodsId:2,
+              goodsImg:"https://img.4008823823.com.cn/kfcios/Version/614_607300.jpg",
+              goodsName:'田园鸡腿堡',
+              price:15
+          }, {
+              goodsId:3,
+              goodsImg:"https://img.4008823823.com.cn/kfcios/Version/604_585900.jpg",
+              goodsName:'和风汉堡',
+              price:15
+          }],
+      type1Goods: [{
+              goodsId:4,
+              goodsImg:"https://img.4008823823.com.cn/kfcios/Version/604_585895.jpg",
+              goodsName:'大包薯条',
+              price:18
+          }, {
+              goodsId:5,
+              goodsImg:"https://img.4008823823.com.cn/kfcios/Version/604_585872.jpg",
+              goodsName:'脆皮炸鸡腿',
+              price:20
+          }, {
+              goodsId:6,
+              goodsImg:"https://img.4008823823.com.cn/kfcios/Version/604_581380.jpg",
+              goodsName:'魔法鸡块',
+              price:20
+          }],
+      type2Goods: [{
+              goodsId:7,
+              goodsImg:"https://img.4008823823.com.cn/kfcios/Version/604_583035.jpg",
+              goodsName:'可乐大杯',
+              price:10
+          }, {
+              goodsId:8,
+              goodsImg:"https://img.4008823823.com.cn/kfcios/Version/630_652494.jpg",
+              goodsName:'雪顶咖啡',
+              price:18
+          }],
+      type3Goods: [{
+              goodsId:9,
+              goodsImg:"https://img.4008823823.com.cn/kfcios/Version/630_658431.jpg",
+              goodsName:'儿童欢乐套餐',
+              price:25
+          }, {
+              goodsId:10,
+              goodsImg:"https://img.4008823823.com.cn/kfcios/Version/604_585864.jpg",
+              goodsName:'快乐全家桶',
+              price:99
+          }],
       totalMoney:0,
-      totalCount:0
+      totalCount:0,
+      orderForm:[],
+      orderandgoodnumber:0,
+      input:'',
+      adress:''
     }
   },
   methods:{
@@ -170,34 +234,40 @@ export default {
     },
     pay(){
       if(this.totalCount!=0){
+        this.order()
         this.delAllGoods()
         this.$message({
-          message:'结账成功，请耐心等待！',
+          message:'结账成功，请耐心等待！可在订单栏查看您的取餐号。',
           type:'success'
         })
       }else{
         this.$message.error('请先添加商品再结账哦！')
       }
+    },
+    order(){
+      this.orderandgoodnumber++
+      var obj={
+        orderNumber:this.orderandgoodnumber,
+        goodNumber:this.orderandgoodnumber,
+        money:this.totalMoney
+      }
+      this.orderForm.push(obj)
+    },
+    submitMessage(){  
+      if(this.input!=''&&this.adress!=''){
+        this.$message.success('已提交成功，我们会很快送达给您！')
+      }
+      this.input=''
+      this.adress=''     
     }
   },
   created:function(){
     axios.get('https://www.easy-mock.com/mock/5b8b30dbf032f03c5e71de7f/kuaican/oftenGoods')
     .then((response)=>{
-        this.oftenGoods=response.data
+      this.oftenGoods=response.data
     })
     .catch((error)=>{
-      
-    })
-    axios.get('https://www.easy-mock.com/mock/5b8b30dbf032f03c5e71de7f/kuaican/typeGoods')
-    .then((response)=>{
-      console.log(response)
-        this.type0Goods=response.data[0]
-        this.type1Goods=response.data[1]
-        this.type2Goods=response.data[2]
-        this.type3Goods=response.data[3]
-    })
-    .catch((error)=>{
-      
+      alert('网络错误')
     })
   },
   mounted: function() {
@@ -207,7 +277,6 @@ export default {
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
 .pos-order {
   background-color: #f9fafc;
@@ -230,6 +299,7 @@ td {
   border-bottom: 1px solid #d3dce6;
   background-color: #f9fafc;
   padding: 9px;
+  color: brown;
 }
 .often-goods-list ul li {
   display: inline-block;
@@ -243,7 +313,7 @@ td {
   color: #58b7ff;
 }
 .cookList li {
-  width: 23%;
+  width: 30%;
   border: 1px solid #e5e9f2;
   display: inline-block;
   margin: 0 10px 10px 10px;
@@ -252,11 +322,10 @@ td {
 }
 
 img{
-  width: 40%;
+  width:50%;
 }
 .foodName {
   font-size: 18px;
-  
   color: brown;
 }
 .foodPrice {
@@ -267,6 +336,7 @@ img{
 .nameandprice{
   display: inline-block;
   vertical-align: top;
+  margin-top: 10px;
 }
 .total{
   background-color: #fff;
@@ -276,5 +346,20 @@ img{
 }
 .total span{
   margin: 0 10px;
+}
+.input{
+  padding: 0px 20px;
+  
+}
+div.el-input{
+  margin-bottom: 10px;
+}
+.input > span{
+  margin-bottom: 8px;
+  display: inline-block;
+}
+div.btn-ipt{
+  text-align: center;
+  padding: 8px;
 }
 </style>
