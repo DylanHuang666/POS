@@ -301,6 +301,9 @@ td {
   padding: 9px;
   color: brown;
 }
+.often-goods-list{
+  padding:0 0 20px 0;
+}
 .often-goods-list ul li {
   display: inline-block;
   border: 1px solid #e5e9f2;
