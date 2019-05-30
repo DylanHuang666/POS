@@ -35,7 +35,7 @@
           <el-tab-pane label="配送">
             <div class="input">
               <span>收件人姓名：</span><el-input v-model="input" placeholder="请输入收件人姓名"></el-input>
-              <span>收件地址：</span><el-input v-model="adress" placeholder="请输入收件地址"></el-input>
+              <span>收件地址：</span><el-input v-model="address" placeholder="请输入收件地址"></el-input>
               <div class="btn-ipt"><el-button type="primary" @click="submitMessage" round>确认</el-button></div>
               
             </div>
@@ -184,7 +184,7 @@ export default {
       orderForm:[],
       orderandgoodnumber:0,
       input:'',
-      adress:''
+      address:''
     }
   },
   methods:{
@@ -254,11 +254,11 @@ export default {
       this.orderForm.push(obj)
     },
     submitMessage(){  
-      if(this.input!=''&&this.adress!=''){
+      if(this.input!=''&&this.address!=''){
         this.$message.success('已提交成功，我们会很快送达给您！')
       }
       this.input=''
-      this.adress=''     
+      this.address=''     
     }
   },
   created:function(){
